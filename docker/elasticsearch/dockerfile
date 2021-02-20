@@ -1,0 +1,6 @@
+FROM docker.elastic.co/elasticsearch/elasticsearch:7.11.1
+
+RUN bin/elasticsearch-plugin install --batch ingest-attachment
+#RUN bin/elasticsearch-plugin install --batch mobz/elasticsearch-head
+#RUN bin/elasticsearch-plugin remove x-pack --purge \
+#    &&  sed -i 's/^xpack/#xpack/' config/elasticsearch.yml

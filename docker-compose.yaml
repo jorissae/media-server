@@ -1,0 +1,46 @@
+version: '3.7'
+services:
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.11.1
+    environment:
+      SERVER_NAME: kibana
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    volumes:
+      - ./kibana.yml:/usr/share/kibana/config/kibana.yml
+    ports:
+      - 5601:5601
+    networks:
+      - elastic
+  elasticsearch:
+    build: docker/elasticsearch
+    container_name: elasticsearch
+    environment:
+      #- node.name=media-server-node
+      - discovery.type=single-node
+      #- cluster.name=media-server-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elastica:/usr/share/elasticsearch/data
+      - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    ports:
+      - 9200:9200
+    networks:
+      - elastic
+  headPlugin:
+    image: mobz/elasticsearch-head:5
+    container_name: head_540
+    ports:
+      - 9100:9100
+    networks:
+      - elastic
+networks:
+  elastic:
+    driver: bridge
+volumes:
+  elastica:
+    driver: local
